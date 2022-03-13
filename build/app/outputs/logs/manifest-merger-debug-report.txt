@@ -16,6 +16,7 @@ INJECTED from /home/freeksa/Documenten/EvolutionLogger/android/app/src/main/Andr
 INJECTED from /home/freeksa/Documenten/EvolutionLogger/android/app/src/main/AndroidManifest.xml:1:1-34:12
 MERGED from /home/freeksa/Documenten/EvolutionLogger/android/app/src/main/AndroidManifest.xml:1:1-34:12
 MERGED from [:sqflite] /home/freeksa/Documenten/EvolutionLogger/build/sqflite/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
+MERGED from [:path_provider_android] /home/freeksa/Documenten/EvolutionLogger/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.fragment:fragment:1.1.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/2fd9120a6da4df3dbabdd40f6a2d8995/fragment-1.1.0/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/eb26273f8f7192460456ce62b9bdf9ef/viewpager-1.0.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.loader:loader:1.0.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/d9536c14ffde0b7289f12ba6def6bfa4/loader-1.0.0/AndroidManifest.xml:17:1-22:12
@@ -54,6 +55,8 @@ INJECTED from /home/freeksa/Documenten/EvolutionLogger/android/app/src/main/Andr
 INJECTED from /home/freeksa/Documenten/EvolutionLogger/android/app/src/main/AndroidManifest.xml
 MERGED from [:sqflite] /home/freeksa/Documenten/EvolutionLogger/build/sqflite/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [:sqflite] /home/freeksa/Documenten/EvolutionLogger/build/sqflite/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:path_provider_android] /home/freeksa/Documenten/EvolutionLogger/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
+MERGED from [:path_provider_android] /home/freeksa/Documenten/EvolutionLogger/build/path_provider_android/intermediates/library_manifest/debug/AndroidManifest.xml:5:5-44
 MERGED from [androidx.fragment:fragment:1.1.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/2fd9120a6da4df3dbabdd40f6a2d8995/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.fragment:fragment:1.1.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/2fd9120a6da4df3dbabdd40f6a2d8995/fragment-1.1.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.viewpager:viewpager:1.0.0] /home/freeksa/.gradle/caches/transforms-2/files-2.1/eb26273f8f7192460456ce62b9bdf9ef/viewpager-1.0.0/AndroidManifest.xml:20:5-44

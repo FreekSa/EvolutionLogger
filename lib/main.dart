@@ -1,116 +1,232 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
+import 'models/log.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(home: App()));
+  WidgetsFlutterBinding.ensureInitialized();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class App extends StatefulWidget {
+  // first page
+  const App({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  ListOfLogs createState() => ListOfLogs();
+}
+
+class ListOfLogs extends State<App> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.red,
-      ),
-      home: const MyHomePage(title: 'Flutter Page'),
-    );
+        home: Scaffold(
+            appBar: AppBar(
+              title: Text("Café"),
+              actions: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    child: Icon(Icons.add),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AddLog()),
+                      ).then(onGoBack);
+                    },
+                  ),
+                )
+              ],
+            ), // naam van het log om toe te voegen
+            body: Center(
+              child: FutureBuilder<List<Log>>(
+                  future: CreateDatabase.instance.GetLogs(),
+                  builder: (BuildContext context,
+                      AsyncSnapshot<List<Log>> snapshot) {
+                    if (snapshot.data == null) {
+                      return Center(child: Text('No logs in List.'));
+                    } else {
+                      List<Log> logs = snapshot.data!.toList();
+                      return ListView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        children: snapshot.data!.map((log) {
+                          return Center(
+                              child: Card(
+                                  child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                ListTile(
+                                    onTap: () async {
+                                      var uuid = Uuid();
+                                    },
+                                    onLongPress: () {
+                                      setState(() {
+                                        CreateDatabase.instance.remove(log.id!);
+                                      });
+                                    },
+                                    leading: Icon(Icons.local_drink),
+                                    title: Text(log.title)),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    TextButton(
+                                      // aftrekken van Count (per log)
+                                      child: const Icon(Icons.remove),
+                                      onPressed: () {
+                                        setState(() {
+                                          int index = snapshot.data!.indexWhere(
+                                              (x) => x.id == log.id);
+                                          Log editLog = snapshot.data!
+                                              .firstWhere(
+                                                  (x) => x.id == log.id);
+                                          Log l = Log(
+                                              id: log.id,
+                                              title: editLog.title,
+                                              date: editLog.date);
+                                          CreateDatabase.instance.update(l);
+                                        });
+                                      },
+                                    ),
+                                    Text("test"), // aantal
+                                  ],
+                                ),
+                              ])));
+                        }).toList(),
+                      );
+                    }
+                  }),
+            ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                print("floating action button clicked");
+              },
+            )));
+  }
+
+  bool onlyUnique(value, index, self) {
+    return self.indexOf(value) == index;
+  }
+
+  FutureOr onGoBack(dynamic value) {
+    // update list after you add a product
+    ListOfLogs();
+    setState() {}
+    ;
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+class CreateDatabase {
+  CreateDatabase._privateConstructor();
+  static final CreateDatabase instance = CreateDatabase._privateConstructor();
+  static Database? _database;
+  static Future _onConfigure(Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
+  }
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  Future<Database> get database async => _database ??= await _initDatabase();
+  Future<Database> _initDatabase() async {
+    Directory documentsDirectory = await getApplicationDocumentsDirectory();
+    String path = join(documentsDirectory.path, 'log.db');
+    return await openDatabase(path,
+        version: 1, onCreate: _onCreate, onConfigure: _onConfigure);
+  }
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  Future _onCreate(Database db, int version) async {
+    await db.execute('''
+      CREATE TABLE logs(
+          id TEXT PRIMARY KEY,
+          title TEXT,
+          date TEXT
+      )
+      ''');
+  }
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  listTables() async {
+    Database db = await instance.database;
+    (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
+      print(row.values);
     });
   }
 
+  Future<List<Log>> GetLogs() async {
+    Database db = await instance.database;
+    var logs = await db.query('logs');
+    List<Log> logsList =
+        logs.isNotEmpty ? logs.map((c) => Log.fromMap(c)).toList() : [];
+    return logsList;
+  }
+
+  Future<int> add(Log log) async {
+    Database db = await instance.database;
+    return await db.insert('logs', log.toMap());
+  }
+
+  Future<int> remove(String id) async {
+    Database db = await instance.database;
+    return await db.delete('logs', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> update(Log log) async {
+    Database db = await instance.database;
+    return await db
+        .update('logs', log.toMap(), where: "id = ?", whereArgs: [log.id]);
+  }
+}
+
+class AddLog extends StatelessWidget {
+  const AddLog({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+    final title = TextEditingController();
+    final date = TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Voeg klacht toe'),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        children: <Widget>[
+          TextFormField(
+            controller: title,
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.local_drink),
+              hintText: 'Klacht',
+              labelText: 'Klacht',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+          ),
+          TextFormField(
+            controller: date,
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.calendar_today),
+              hintText: 'Datum',
+              labelText: 'Datum',
             ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              var uuid = Uuid();
+              if (title.text != null && date.text != null) {
+                await CreateDatabase.instance.add(Log(
+                  id: uuid.v4(),
+                  title: title.text,
+                  date: DateTime.now().toString(),
+                ));
+              } else {
+                print('niet gelukt');
+              }
+              Navigator.pop(context);
+              // Navigate back to first route when tapped.
+            },
+            child: const Text('Voeg toe'),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
