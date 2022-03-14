@@ -28,7 +28,7 @@ class ListOfLogs extends State<App> {
     return MaterialApp(
         home: Scaffold(
             appBar: AppBar(
-              title: Text("Café"),
+              title: Text("Logs"),
               actions: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(right: 20.0),
