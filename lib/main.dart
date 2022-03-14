@@ -77,25 +77,7 @@ class ListOfLogs extends State<App> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: <Widget>[
-                                    TextButton(
-                                      // aftrekken van Count (per log)
-                                      child: const Icon(Icons.remove),
-                                      onPressed: () {
-                                        setState(() {
-                                          int index = snapshot.data!.indexWhere(
-                                              (x) => x.id == log.id);
-                                          Log editLog = snapshot.data!
-                                              .firstWhere(
-                                                  (x) => x.id == log.id);
-                                          Log l = Log(
-                                              id: log.id,
-                                              title: editLog.title,
-                                              date: editLog.date);
-                                          CreateDatabase.instance.update(l);
-                                        });
-                                      },
-                                    ),
-                                    Text("test"), // aantal
+                                    Text(log.date),
                                   ],
                                 ),
                               ])));
@@ -117,9 +99,9 @@ class ListOfLogs extends State<App> {
 
   FutureOr onGoBack(dynamic value) {
     // update list after you add a product
-    ListOfLogs();
-    setState() {}
-    ;
+    setState() {
+      ListOfLogs();
+    }
   }
 }
 
