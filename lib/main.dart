@@ -37,7 +37,7 @@ class ListOfLogs extends State<App> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const AddLog()),
+                        MaterialPageRoute(builder: (context) => AddLogWidget()),
                       ).then(onGoBack);
                     },
                   ),
@@ -53,6 +53,7 @@ class ListOfLogs extends State<App> {
                       return Center(child: Text('No logs in List.'));
                     } else {
                       List<Log> logs = snapshot.data!.toList();
+                      print(logs);
                       return ListView(
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
@@ -180,13 +181,19 @@ class CreateDatabase {
   }
 }
 
-class AddLog extends StatelessWidget {
-  const AddLog({Key? key}) : super(key: key);
+class AddLogWidget extends StatefulWidget {
+  AddLogWidget({Key? key}) : super(key: key);
+  @override
+  AddLog createState() => new AddLog();
+}
+
+class AddLog extends State<AddLogWidget> {
+  DateTime pickedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final title = TextEditingController();
-    final date = TextEditingController();
-    return Scaffold(
+    return MaterialApp(
+        home: Scaffold(
       appBar: AppBar(
         title: const Text('Voeg klacht toe'),
       ),
@@ -200,22 +207,38 @@ class AddLog extends StatelessWidget {
               labelText: 'Klacht',
             ),
           ),
-          TextFormField(
-            controller: date,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.calendar_today),
-              hintText: 'Datum',
-              labelText: 'Datum',
-            ),
-          ),
+          Text(pickedDate == null ? "test" : pickedDate.toString()),
+          TextButton(
+              // aftrekken van Count (per log)
+              child: const Icon(Icons.calendar_today),
+              onPressed: () async {
+                final initialDate = DateTime.now();
+                showDatePicker(
+                        context: context,
+                        initialDate: initialDate,
+                        firstDate: DateTime(DateTime.now().year - 20),
+                        lastDate: DateTime(DateTime.now().year + 10))
+                    .then((date) {
+                  setState(() {
+                    if (date == null) {
+                      pickedDate = DateTime.now();
+                    } else {
+                      pickedDate = date as DateTime;
+                    }
+                    ;
+                    print(pickedDate.toString() + " 1");
+                  });
+                });
+              }),
           ElevatedButton(
             onPressed: () async {
               var uuid = Uuid();
-              if (title.text != null && date.text != null) {
+              if (title.text != null) {
+                print(pickedDate.toString() + " 2");
                 await CreateDatabase.instance.add(Log(
                   id: uuid.v4(),
                   title: title.text,
-                  date: DateTime.now().toString(),
+                  date: pickedDate.toString(),
                 ));
               } else {
                 print('niet gelukt');
@@ -227,6 +250,6 @@ class AddLog extends StatelessWidget {
           ),
         ],
       ),
-    );
+    ));
   }
 }
