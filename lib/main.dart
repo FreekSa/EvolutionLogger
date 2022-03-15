@@ -176,6 +176,9 @@ class AddLog extends State<AddLogWidget> {
       home: Scaffold(
           appBar: AppBar(
             title: const Text('Voeg klacht toe'),
+            leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context)),
           ),
           body: Column(
             children: <Widget>[
