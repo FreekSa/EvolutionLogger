@@ -10,7 +10,7 @@ import 'models/log.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() {
-  runApp(MaterialApp(home: App()));
+  runApp(const MaterialApp(home: App()));
   WidgetsFlutterBinding.ensureInitialized();
 }
 
@@ -74,7 +74,7 @@ class ListOfLogs extends State<App> {
                                 leading: Icon(Icons.local_drink),
                                 title: Text(log.title),
                                 subtitle: Text(
-                                    "${DateTime.parse(log.date).hour} ${DateTime.parse(log.date).minute} ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
+                                    "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
                               )
                             ],
                           )));
@@ -173,86 +173,90 @@ class AddLog extends State<AddLogWidget> {
   Widget build(BuildContext context) {
     final title = TextEditingController();
     return MaterialApp(
-        home: Scaffold(
-      appBar: AppBar(
-        title: const Text('Voeg klacht toe'),
-      ),
-      body: Column(
-        children: <Widget>[
-          Text(pickedDate == null ? "test" : pickedDate.toString()),
-          TextButton(
-              // aftrekken van Count (per log)
-              child: const Icon(Icons.calendar_today),
-              onPressed: () async {
-                final initialDate = DateTime.now();
-                showDatePicker(
-                        context: context,
-                        initialDate: initialDate,
-                        firstDate: DateTime(DateTime.now().year - 20),
-                        lastDate: DateTime(DateTime.now().year + 10))
-                    .then((date) {
-                  setState(() {
-                    if (date == null) {
-                      pickedDate = DateTime.now();
-                    } else {
-                      pickedDate = date as DateTime;
-                    }
-                    ;
-                  });
-                });
-              }),
-          TextButton(
-              // aftrekken van Count (per log)
-              child: const Icon(Icons.lock_clock),
-              onPressed: () async {
-                final initialTime = TimeOfDay(
-                    hour: DateTime.now().hour, minute: DateTime.now().minute);
-                showTimePicker(
-                  context: context,
-                  initialTime: initialTime,
-                ).then((time) {
-                  setState(() {
-                    if (time == null) {
-                      pickedTime = TimeOfDay(
-                          hour: DateTime.now().hour,
-                          minute: DateTime.now().minute);
-                    } else {
-                      pickedTime = time;
-                      pickedDate = DateTime(pickedDate.year, pickedDate.month,
-                          pickedDate.day, time.hour, time.minute);
-                      print(pickedDate);
-                    }
-                    ;
-                  });
-                });
-              }),
-          TextFormField(
-            controller: title,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.local_drink),
-              hintText: 'Klacht',
-              labelText: 'Klacht',
-            ),
+      home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Voeg klacht toe'),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              var uuid = Uuid();
-              if (title.text != null) {
-                await CreateDatabase.instance.add(Log(
-                  id: uuid.v4(),
-                  title: title.text,
-                  date: pickedDate.toString(),
-                ));
-              } else {
-                print('niet gelukt');
-              }
-              Navigator.pop(context);
-              // Navigate back to first route when tapped.
-            },
-            child: const Text('Voeg toe'),
-          ),
-        ],
-      ),
-    ));
+          body: Column(
+            children: <Widget>[
+              Text(pickedDate == null ? "test" : pickedDate.toString()),
+              TextButton(
+                  // aftrekken van Count (per log)
+                  child: const Text("Datum"),
+                  onPressed: () async {
+                    final initialDate = DateTime.now();
+                    showDatePicker(
+                            context: context,
+                            initialDate: initialDate,
+                            firstDate: DateTime(DateTime.now().year - 20),
+                            lastDate: DateTime(DateTime.now().year + 10))
+                        .then((date) {
+                      setState(() {
+                        if (date == null) {
+                          pickedDate = DateTime.now();
+                        } else {
+                          pickedDate = date as DateTime;
+                        }
+                        ;
+                      });
+                    });
+                  }),
+              TextButton(
+                  // aftrekken van Count (per log)
+                  child: const Text("Uur"),
+                  onPressed: () async {
+                    final initialTime = TimeOfDay(
+                        hour: DateTime.now().hour,
+                        minute: DateTime.now().minute);
+                    showTimePicker(
+                      context: context,
+                      initialTime: initialTime,
+                    ).then((time) {
+                      setState(() {
+                        if (time == null) {
+                          pickedTime = TimeOfDay(
+                              hour: DateTime.now().hour,
+                              minute: DateTime.now().minute);
+                        } else {
+                          pickedTime = time;
+                          pickedDate = DateTime(
+                              pickedDate.year,
+                              pickedDate.month,
+                              pickedDate.day,
+                              time.hour,
+                              time.minute);
+                        }
+                        ;
+                      });
+                    });
+                  }),
+              TextFormField(
+                controller: title,
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.local_drink),
+                  hintText: 'Klacht',
+                  labelText: 'Klacht',
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  var uuid = Uuid();
+                  if (title.text != null) {
+                    await CreateDatabase.instance.add(Log(
+                      id: uuid.v4(),
+                      title: title.text,
+                      date: pickedDate.toString(),
+                    ));
+                  } else {
+                    print('niet gelukt');
+                  }
+                  Navigator.pop(context);
+                  // Navigate back to first route when tapped.
+                },
+                child: const Text('Voeg toe'),
+              ),
+            ],
+          )),
+    );
   }
 }
