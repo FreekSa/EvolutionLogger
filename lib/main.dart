@@ -53,7 +53,6 @@ class ListOfLogs extends State<App> {
                       return Center(child: Text('No logs in List.'));
                     } else {
                       List<Log> logs = snapshot.data!.toList();
-                      print(logs);
                       return ListView(
                         keyboardDismissBehavior:
                             ScrollViewKeyboardDismissBehavior.onDrag,
@@ -61,26 +60,24 @@ class ListOfLogs extends State<App> {
                           return Center(
                               child: Card(
                                   child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                ListTile(
-                                    onTap: () async {
-                                      var uuid = Uuid();
-                                    },
-                                    onLongPress: () {
-                                      setState(() {
-                                        CreateDatabase.instance.remove(log.id!);
-                                      });
-                                    },
-                                    leading: Icon(Icons.local_drink),
-                                    title: Text(log.title)),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: <Widget>[
-                                    Text(log.date),
-                                  ],
-                                ),
-                              ])));
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                onTap: () async {
+                                  print(log.id);
+                                },
+                                onLongPress: () {
+                                  setState(() {
+                                    CreateDatabase.instance.remove(log.id!);
+                                  });
+                                },
+                                leading: Icon(Icons.local_drink),
+                                title: Text(log.title),
+                                subtitle: Text(
+                                    "${DateTime.parse(log.date).hour} ${DateTime.parse(log.date).minute} ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
+                              )
+                            ],
+                          )));
                         }).toList(),
                       );
                     }
@@ -133,14 +130,13 @@ class CreateDatabase {
 
   listTables() async {
     Database db = await instance.database;
-    (await db.query('sqlite_master', columns: ['type', 'name'])).forEach((row) {
-      print(row.values);
-    });
+    (await db.query('sqlite_master', columns: ['type', 'name']))
+        .forEach((row) {});
   }
 
   Future<List<Log>> GetLogs() async {
     Database db = await instance.database;
-    var logs = await db.query('logs');
+    var logs = await db.query('logs', orderBy: 'date');
     List<Log> logsList =
         logs.isNotEmpty ? logs.map((c) => Log.fromMap(c)).toList() : [];
     return logsList;
@@ -171,6 +167,8 @@ class AddLogWidget extends StatefulWidget {
 
 class AddLog extends State<AddLogWidget> {
   DateTime pickedDate = DateTime.now();
+  TimeOfDay pickedTime =
+      TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
   @override
   Widget build(BuildContext context) {
     final title = TextEditingController();
@@ -181,14 +179,6 @@ class AddLog extends State<AddLogWidget> {
       ),
       body: Column(
         children: <Widget>[
-          TextFormField(
-            controller: title,
-            decoration: const InputDecoration(
-              icon: const Icon(Icons.local_drink),
-              hintText: 'Klacht',
-              labelText: 'Klacht',
-            ),
-          ),
           Text(pickedDate == null ? "test" : pickedDate.toString()),
           TextButton(
               // aftrekken van Count (per log)
@@ -208,15 +198,46 @@ class AddLog extends State<AddLogWidget> {
                       pickedDate = date as DateTime;
                     }
                     ;
-                    print(pickedDate.toString() + " 1");
                   });
                 });
               }),
+          TextButton(
+              // aftrekken van Count (per log)
+              child: const Icon(Icons.lock_clock),
+              onPressed: () async {
+                final initialTime = TimeOfDay(
+                    hour: DateTime.now().hour, minute: DateTime.now().minute);
+                showTimePicker(
+                  context: context,
+                  initialTime: initialTime,
+                ).then((time) {
+                  setState(() {
+                    if (time == null) {
+                      pickedTime = TimeOfDay(
+                          hour: DateTime.now().hour,
+                          minute: DateTime.now().minute);
+                    } else {
+                      pickedTime = time;
+                      pickedDate = DateTime(pickedDate.year, pickedDate.month,
+                          pickedDate.day, time.hour, time.minute);
+                      print(pickedDate);
+                    }
+                    ;
+                  });
+                });
+              }),
+          TextFormField(
+            controller: title,
+            decoration: const InputDecoration(
+              icon: const Icon(Icons.local_drink),
+              hintText: 'Klacht',
+              labelText: 'Klacht',
+            ),
+          ),
           ElevatedButton(
             onPressed: () async {
               var uuid = Uuid();
               if (title.text != null) {
-                print(pickedDate.toString() + " 2");
                 await CreateDatabase.instance.add(Log(
                   id: uuid.v4(),
                   title: title.text,
