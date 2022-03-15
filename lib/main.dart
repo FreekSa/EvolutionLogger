@@ -71,7 +71,7 @@ class ListOfLogs extends State<App> {
                                     CreateDatabase.instance.remove(log.id!);
                                   });
                                 },
-                                leading: Icon(Icons.local_drink),
+                                leading: Icon(Icons.medication),
                                 title: Text(log.title),
                                 subtitle: Text(
                                     "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
@@ -84,8 +84,9 @@ class ListOfLogs extends State<App> {
                   }),
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () async {
-                print("floating action button clicked");
+              child: Icon(Icons.circle),
+              onPressed: () => {
+                setState(() => {ListOfLogs()})
               },
             )));
   }
