@@ -183,7 +183,8 @@ class AddLog extends State<AddLogWidget> {
           ),
           body: Column(
             children: <Widget>[
-              Text(pickedDate == null ? "test" : pickedDate.toString()),
+              Text(
+                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute}"),
               TextButton(
                   // aftrekken van Count (per log)
                   child: const Text("Datum"),
