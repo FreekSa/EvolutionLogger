@@ -97,9 +97,7 @@ class ListOfLogs extends State<App> {
 
   FutureOr onGoBack(dynamic value) {
     // update list after you add a product
-    setState() {
-      ListOfLogs();
-    }
+    setState(() => {ListOfLogs()});
   }
 }
 
@@ -208,6 +206,7 @@ class AddLog extends State<AddLogWidget> {
                               lastDate: DateTime(DateTime.now().year + 10))
                           .then((date) {
                         setState(() {
+                          FocusManager.instance.primaryFocus?.unfocus();
                           if (date == null) {
                             pickedDate = DateTime.now();
                           } else {
@@ -227,7 +226,6 @@ class AddLog extends State<AddLogWidget> {
                         textStyle: const TextStyle(fontSize: 16.0)),
                     child: const Text("Kies uur"),
                     onPressed: () async {
-                      print(title.text);
                       final initialTime = TimeOfDay(
                           hour: DateTime.now().hour,
                           minute: DateTime.now().minute);
@@ -236,7 +234,7 @@ class AddLog extends State<AddLogWidget> {
                         initialTime: initialTime,
                       ).then((time) {
                         setState(() {
-                          print(title.text);
+                          FocusManager.instance.primaryFocus?.unfocus();
                           if (time == null) {
                             pickedTime = TimeOfDay(
                                 hour: DateTime.now().hour,
