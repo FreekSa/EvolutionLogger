@@ -167,12 +167,12 @@ class AddLogWidget extends StatefulWidget {
 }
 
 class AddLog extends State<AddLogWidget> {
+  final title = TextEditingController();
   DateTime pickedDate = DateTime.now();
   TimeOfDay pickedTime =
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
   @override
   Widget build(BuildContext context) {
-    final title = TextEditingController();
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
@@ -183,6 +183,14 @@ class AddLog extends State<AddLogWidget> {
           ),
           body: Column(
             children: <Widget>[
+              TextFormField(
+                controller: title,
+                decoration: const InputDecoration(
+                  icon: const Icon(Icons.local_drink),
+                  hintText: 'Klacht',
+                  labelText: 'Klacht',
+                ),
+              ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.50,
                 child: TextButton(
@@ -219,6 +227,7 @@ class AddLog extends State<AddLogWidget> {
                         textStyle: const TextStyle(fontSize: 16.0)),
                     child: const Text("Kies uur"),
                     onPressed: () async {
+                      print(title.text);
                       final initialTime = TimeOfDay(
                           hour: DateTime.now().hour,
                           minute: DateTime.now().minute);
@@ -227,6 +236,7 @@ class AddLog extends State<AddLogWidget> {
                         initialTime: initialTime,
                       ).then((time) {
                         setState(() {
+                          print(title.text);
                           if (time == null) {
                             pickedTime = TimeOfDay(
                                 hour: DateTime.now().hour,
@@ -250,14 +260,6 @@ class AddLog extends State<AddLogWidget> {
                 child: Text(
                   "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute}",
                   style: const TextStyle(fontSize: 20),
-                ),
-              ),
-              TextFormField(
-                controller: title,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.local_drink),
-                  hintText: 'Klacht',
-                  labelText: 'Klacht',
                 ),
               ),
               ElevatedButton(
