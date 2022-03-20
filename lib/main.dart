@@ -256,7 +256,9 @@ class AddLog extends State<AddLogWidget> {
               Container(
                 margin: const EdgeInsets.all(3),
                 child: Text(
-                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute}",
+                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute < 10 ? "0" + pickedTime.minute.toString() : {
+                      pickedTime.minute
+                    }}",
                   style: const TextStyle(fontSize: 20),
                 ),
               ),
