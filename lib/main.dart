@@ -82,14 +82,6 @@ class ListOfLogs extends State<App> {
                                     ],
                                   ),
                                   child: ListTile(
-                                    onTap: () async {
-                                      print(log.id);
-                                    },
-                                    onLongPress: () {
-                                      setState(() {
-                                        CreateDatabase.instance.remove(log.id!);
-                                      });
-                                    },
                                     leading: Icon(Icons.medication),
                                     title: Text(log.title),
                                     subtitle: Text(
