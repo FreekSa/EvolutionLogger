@@ -80,6 +80,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "flutter_slidable",
+      "rootUri": "file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_slidable-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///home/freeksa/Documenten/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -272,7 +278,7 @@
       "languageVersion": "2.15"
     }
   ],
-  "generated": "2022-03-13T17:14:45.533585Z",
+  "generated": "2022-03-20T15:46:00.339618Z",
   "generator": "pub",
   "generatorVersion": "2.15.1"
 }

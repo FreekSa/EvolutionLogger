@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
@@ -62,20 +62,39 @@ class ListOfLogs extends State<App> {
                                   child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              ListTile(
-                                onTap: () async {
-                                  print(log.id);
-                                },
-                                onLongPress: () {
-                                  setState(() {
-                                    CreateDatabase.instance.remove(log.id!);
-                                  });
-                                },
-                                leading: Icon(Icons.medication),
-                                title: Text(log.title),
-                                subtitle: Text(
-                                    "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
-                              )
+                              Slidable(
+                                  key: const ValueKey(0),
+                                  endActionPane: ActionPane(
+                                    motion: ScrollMotion(),
+                                    children: [
+                                      SlidableAction(
+                                        onPressed: ((context) => {
+                                              setState(() {
+                                                CreateDatabase.instance
+                                                    .remove(log.id!);
+                                              })
+                                            }),
+                                        backgroundColor: Color(0xFFFE4A49),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete,
+                                        label: 'Delete',
+                                      ),
+                                    ],
+                                  ),
+                                  child: ListTile(
+                                    onTap: () async {
+                                      print(log.id);
+                                    },
+                                    onLongPress: () {
+                                      setState(() {
+                                        CreateDatabase.instance.remove(log.id!);
+                                      });
+                                    },
+                                    leading: Icon(Icons.medication),
+                                    title: Text(log.title),
+                                    subtitle: Text(
+                                        "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
+                                  ))
                             ],
                           )));
                         }).toList(),
