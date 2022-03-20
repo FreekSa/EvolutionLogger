@@ -183,58 +183,75 @@ class AddLog extends State<AddLogWidget> {
           ),
           body: Column(
             children: <Widget>[
-              Text(
-                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute}"),
-              TextButton(
-                  // aftrekken van Count (per log)
-                  child: const Text("Datum"),
-                  onPressed: () async {
-                    final initialDate = DateTime.now();
-                    showDatePicker(
-                            context: context,
-                            initialDate: initialDate,
-                            firstDate: DateTime(DateTime.now().year - 20),
-                            lastDate: DateTime(DateTime.now().year + 10))
-                        .then((date) {
-                      setState(() {
-                        if (date == null) {
-                          pickedDate = DateTime.now();
-                        } else {
-                          pickedDate = date as DateTime;
-                        }
-                        ;
+              Container(
+                width: MediaQuery.of(context).size.width * 0.50,
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        primary: Colors.white,
+                        textStyle: const TextStyle(fontSize: 16.0)),
+                    child: const Text("Kies datum"),
+                    onPressed: () async {
+                      final initialDate = DateTime.now();
+                      showDatePicker(
+                              context: context,
+                              initialDate: initialDate,
+                              firstDate: DateTime(DateTime.now().year - 20),
+                              lastDate: DateTime(DateTime.now().year + 10))
+                          .then((date) {
+                        setState(() {
+                          if (date == null) {
+                            pickedDate = DateTime.now();
+                          } else {
+                            pickedDate = date as DateTime;
+                          }
+                          ;
+                        });
                       });
-                    });
-                  }),
-              TextButton(
-                  // aftrekken van Count (per log)
-                  child: const Text("Uur"),
-                  onPressed: () async {
-                    final initialTime = TimeOfDay(
-                        hour: DateTime.now().hour,
-                        minute: DateTime.now().minute);
-                    showTimePicker(
-                      context: context,
-                      initialTime: initialTime,
-                    ).then((time) {
-                      setState(() {
-                        if (time == null) {
-                          pickedTime = TimeOfDay(
-                              hour: DateTime.now().hour,
-                              minute: DateTime.now().minute);
-                        } else {
-                          pickedTime = time;
-                          pickedDate = DateTime(
-                              pickedDate.year,
-                              pickedDate.month,
-                              pickedDate.day,
-                              time.hour,
-                              time.minute);
-                        }
-                        ;
+                    }),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.50,
+                child: TextButton(
+                    style: TextButton.styleFrom(
+                        backgroundColor: Colors.lightBlue,
+                        primary: Colors.white,
+                        textStyle: const TextStyle(fontSize: 16.0)),
+                    child: const Text("Kies uur"),
+                    onPressed: () async {
+                      final initialTime = TimeOfDay(
+                          hour: DateTime.now().hour,
+                          minute: DateTime.now().minute);
+                      showTimePicker(
+                        context: context,
+                        initialTime: initialTime,
+                      ).then((time) {
+                        setState(() {
+                          if (time == null) {
+                            pickedTime = TimeOfDay(
+                                hour: DateTime.now().hour,
+                                minute: DateTime.now().minute);
+                          } else {
+                            pickedTime = time;
+                            pickedDate = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                time.hour,
+                                time.minute);
+                          }
+                          ;
+                        });
                       });
-                    });
-                  }),
+                    }),
+              ),
+              Container(
+                margin: const EdgeInsets.all(3),
+                child: Text(
+                  "${pickedDate.day}/${pickedDate.month}/${pickedDate.year} \t ${pickedTime.hour}:${pickedTime.minute}",
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ),
               TextFormField(
                 controller: title,
                 decoration: const InputDecoration(
