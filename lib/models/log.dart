@@ -1,9 +1,9 @@
 class Log {
-  final String? id;
+  final String id;
   final String title;
   final String date;
 
-  Log({this.id, required this.title, required this.date});
+  Log({required this.id, required this.title, required this.date});
 
   Map<String, dynamic> toMap() {
     return {

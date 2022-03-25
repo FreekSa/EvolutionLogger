@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'models/log.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
 void main() {
   runApp(const MaterialApp(home: App()));
@@ -19,8 +21,63 @@ class App extends StatefulWidget {
   const App({Key? key}) : super(key: key);
 
   @override
+//  CreateChart createState() => CreateChart();
   ListOfLogs createState() => ListOfLogs();
 }
+
+/*class CreateChart extends State<App> {
+  TooltipBehavior _tooltip = TooltipBehavior(enable: true);
+  List<Log> logs = [
+    Log(
+        title: "Test1",
+        date: new DateTime.now().add(const Duration(days: 1)).toString()),
+    Log(
+        title: "Test2",
+        date: new DateTime.now()
+            .add(const Duration(days: 2, hours: 1))
+            .toString()),
+    Log(
+        title: "Test3",
+        date: new DateTime.now()
+            .add(const Duration(days: 3, hours: 2))
+            .toString()),
+    Log(
+        title: "Test4",
+        date: new DateTime.now()
+            .add(const Duration(days: 4, hours: 3))
+            .toString()),
+    Log(
+        title: "Test5",
+        date: new DateTime.now()
+            .add(const Duration(days: 5, hours: 4))
+            .toString())
+  ];
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: 400,
+        height: 400,
+        child: Scaffold(
+            body: SfCartesianChart(
+          title: ChartTitle(text: 'Data'),
+          legend: Legend(isVisible: true),
+          tooltipBehavior: _tooltip,
+          series: <ChartSeries>[
+            LineSeries<Log, int>(
+                dataSource: logs,
+                xValueMapper: (Log l, _) => DateTime.parse(l.date).day,
+                yValueMapper: (Log l, _) => DateTime.parse(l.date).hour,
+                dataLabelSettings: DataLabelSettings(isVisible: true),
+                enableTooltip: true),
+          ],
+          primaryXAxis:
+              NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
+          primaryYAxis:
+              NumericAxis(edgeLabelPlacement: EdgeLabelPlacement.shift),
+        )));
+  }
+}
+*/
 
 class ListOfLogs extends State<App> {
   @override
@@ -65,16 +122,54 @@ class ListOfLogs extends State<App> {
                               Slidable(
                                   key: const ValueKey(0),
                                   endActionPane: ActionPane(
-                                    motion: ScrollMotion(),
+                                    motion: const ScrollMotion(),
                                     children: [
                                       SlidableAction(
                                         onPressed: ((context) => {
-                                              setState(() {
-                                                CreateDatabase.instance
-                                                    .remove(log.id!);
-                                              })
+                                              showDialog<String>(
+                                                  context: context,
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      AlertDialog(
+                                                          title: Text(
+                                                              "Zeker dat je ${log.title} wil verwijderen?"),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                                onPressed: () =>
+                                                                    Navigator.pop(
+                                                                        context,
+                                                                        "Nee"),
+                                                                child: const Text(
+                                                                    "Nee",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16.0))),
+                                                            TextButton(
+                                                                child: const Text(
+                                                                    "Ja",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            16.0)),
+                                                                onPressed: () {
+                                                                  setState(() {
+                                                                    Future<int>
+                                                                        removed =
+                                                                        CreateDatabase
+                                                                            .instance
+                                                                            .remove(log.id);
+                                                                    if (removed !=
+                                                                        null) {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    }
+                                                                    print(
+                                                                        removed);
+                                                                  });
+                                                                })
+                                                          ]))
                                             }),
-                                        backgroundColor: Color(0xFFFE4A49),
+                                        backgroundColor:
+                                            const Color(0xFFFE4A49),
                                         foregroundColor: Colors.white,
                                         icon: Icons.delete,
                                         label: 'Delete',

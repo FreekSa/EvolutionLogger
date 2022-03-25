@@ -54,6 +54,10 @@ flutter_slidable
 2.12
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_slidable-1.2.0/
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_slidable-1.2.0/lib/
+intl
+2.12
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0/
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/intl-0.17.0/lib/
 lints
 2.12
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/lints-1.0.1/
@@ -138,6 +142,14 @@ string_scanner
 2.12
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.1.0/
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/string_scanner-1.1.0/lib/
+syncfusion_flutter_charts
+2.12
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_charts-19.4.56/
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_charts-19.4.56/lib/
+syncfusion_flutter_core
+2.12
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_core-19.4.56/
+file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_core-19.4.56/lib/
 synchronized
 2.12
 file:///home/freeksa/Documenten/flutter/.pub-cache/hosted/pub.dartlang.org/synchronized-3.0.0/
