@@ -20,7 +20,7 @@ void main() {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: [Locale('nl', '')],
+      supportedLocales: [Locale('es', '')],
       home: App()));
   WidgetsFlutterBinding.ensureInitialized();
 }
@@ -103,7 +103,8 @@ class ListOfLogs extends State<App> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => AddLogWidget()),
+                        MaterialPageRoute(
+                            builder: (context) => AddOrEditLogWidget()),
                       ).then(onGoBack);
                     },
                   ),
@@ -133,6 +134,22 @@ class ListOfLogs extends State<App> {
                                   endActionPane: ActionPane(
                                     motion: const ScrollMotion(),
                                     children: [
+                                      SlidableAction(
+                                        onPressed: ((context) => {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        AddOrEditLogWidget(
+                                                            log: log)),
+                                              ).then(onGoBack)
+                                            }),
+                                        backgroundColor:
+                                            const Color(0xFFFF7435),
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.edit,
+                                        label: 'Edit',
+                                      ),
                                       SlidableAction(
                                         onPressed: ((context) => {
                                               showDialog<String>(
@@ -271,24 +288,36 @@ class CreateDatabase {
   }
 }
 
-class AddLogWidget extends StatefulWidget {
-  AddLogWidget({Key? key}) : super(key: key);
+class AddOrEditLogWidget extends StatefulWidget {
+  AddOrEditLogWidget({Key? key, this.log}) : super(key: key);
+  Log? log;
   @override
-  AddLog createState() => new AddLog();
+  AddOrEditLog createState() => AddOrEditLog(log);
 }
 
-class AddLog extends State<AddLogWidget> {
+class AddOrEditLog extends State<AddOrEditLogWidget> {
   final title = TextEditingController();
+  Log? log;
   bool validation = false;
   DateTime pickedDate = DateTime.now();
   TimeOfDay pickedTime =
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
+
+  AddOrEditLog(Log? log) {
+    if (log != null) {
+      pickedDate = DateTime.parse(log.date);
+      pickedTime = TimeOfDay(hour: pickedDate.hour, minute: pickedDate.minute);
+      title.text = log.title;
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('Voeg klacht toe'),
+            title: log == null
+                ? const Text('Voeg klacht toe')
+                : const Text('Wijzig klacht'),
             leading: IconButton(
                 icon: Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context)),
@@ -312,10 +341,9 @@ class AddLog extends State<AddLogWidget> {
                         textStyle: const TextStyle(fontSize: 16.0)),
                     child: const Text("Kies datum"),
                     onPressed: () async {
-                      final initialDate = DateTime.now();
                       showDatePicker(
                               context: context,
-                              initialDate: initialDate,
+                              initialDate: pickedDate,
                               firstDate: DateTime(DateTime.now().year - 20),
                               lastDate: DateTime(DateTime.now().year + 10))
                           .then((date) {
@@ -324,7 +352,8 @@ class AddLog extends State<AddLogWidget> {
                           if (date == null) {
                             pickedDate = DateTime.now();
                           } else {
-                            pickedDate = date as DateTime;
+                            pickedDate = date;
+                            print(pickedDate);
                           }
                           ;
                         });
@@ -340,14 +369,10 @@ class AddLog extends State<AddLogWidget> {
                         textStyle: const TextStyle(fontSize: 16.0)),
                     child: const Text("Kies uur"),
                     onPressed: () async {
-                      final initialTime = TimeOfDay(
-                          hour: DateTime.now().hour,
-                          minute: DateTime.now().minute);
                       showTimePicker(
                         context: context,
-                        initialTime: initialTime,
+                        initialTime: pickedTime,
                       ).then((time) {
-                        print(time);
                         setState(() {
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (time == null) {
@@ -360,8 +385,9 @@ class AddLog extends State<AddLogWidget> {
                                 pickedDate.year,
                                 pickedDate.month,
                                 pickedDate.day,
-                                time.hour,
-                                time.minute);
+                                pickedTime.hour,
+                                pickedTime.minute);
+                            print(pickedTime);
                           }
                           ;
                         });
