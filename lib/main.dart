@@ -162,8 +162,6 @@ class ListOfLogs extends State<App> {
                                                                       Navigator.pop(
                                                                           context);
                                                                     }
-                                                                    print(
-                                                                        removed);
                                                                   });
                                                                 })
                                                           ]))
@@ -272,6 +270,7 @@ class AddLogWidget extends StatefulWidget {
 
 class AddLog extends State<AddLogWidget> {
   final title = TextEditingController();
+  bool validation = false;
   DateTime pickedDate = DateTime.now();
   TimeOfDay pickedTime =
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
@@ -289,11 +288,11 @@ class AddLog extends State<AddLogWidget> {
             children: <Widget>[
               TextFormField(
                 controller: title,
-                decoration: const InputDecoration(
-                  icon: const Icon(Icons.local_drink),
-                  hintText: 'Klacht',
-                  labelText: 'Klacht',
-                ),
+                decoration: InputDecoration(
+                    icon: const Icon(Icons.local_drink),
+                    hintText: 'Klacht',
+                    labelText: 'Klacht',
+                    errorText: validation ? "Vul een klacht in" : null),
               ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.50,
@@ -369,17 +368,18 @@ class AddLog extends State<AddLogWidget> {
               ElevatedButton(
                 onPressed: () async {
                   var uuid = Uuid();
-                  if (title.text != null) {
+                  if (title.text.isNotEmpty) {
                     await CreateDatabase.instance.add(Log(
                       id: uuid.v4(),
                       title: title.text,
                       date: pickedDate.toString(),
                     ));
+                    Navigator.pop(context);
                   } else {
-                    print('niet gelukt');
+                    setState(() {
+                      validation = true;
+                    });
                   }
-                  Navigator.pop(context);
-                  // Navigate back to first route when tapped.
                 },
                 child: const Text('Voeg toe'),
               ),
