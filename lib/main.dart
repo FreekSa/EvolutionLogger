@@ -104,7 +104,12 @@ class ListOfLogs extends State<App> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => AddOrEditLogWidget()),
+                            builder: (context) => AddOrEditLogWidget(
+                                  log: Log(
+                                      id: null.toString(),
+                                      date: null.toString(),
+                                      title: null.toString()),
+                                )),
                       ).then(onGoBack);
                     },
                   ),
@@ -289,8 +294,8 @@ class CreateDatabase {
 }
 
 class AddOrEditLogWidget extends StatefulWidget {
-  AddOrEditLogWidget({Key? key, this.log}) : super(key: key);
-  Log? log;
+  AddOrEditLogWidget({Key? key, required this.log}) : super(key: key);
+  Log log;
   @override
   AddOrEditLog createState() => AddOrEditLog(log);
 }
@@ -303,8 +308,9 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
   TimeOfDay pickedTime =
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
 
-  AddOrEditLog(Log? log) {
-    if (log != null) {
+  AddOrEditLog(Log log) {
+    print(log);
+    if (log.id.isNotEmpty) {
       pickedDate = DateTime.parse(log.date);
       pickedTime = TimeOfDay(hour: pickedDate.hour, minute: pickedDate.minute);
       title.text = log.title;
@@ -353,7 +359,6 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                             pickedDate = DateTime.now();
                           } else {
                             pickedDate = date;
-                            print(pickedDate);
                           }
                           ;
                         });
@@ -387,7 +392,6 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                                 pickedDate.day,
                                 pickedTime.hour,
                                 pickedTime.minute);
-                            print(pickedTime);
                           }
                           ;
                         });
@@ -405,11 +409,19 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                 onPressed: () async {
                   var uuid = Uuid();
                   if (title.text.isNotEmpty) {
-                    await CreateDatabase.instance.add(Log(
-                      id: uuid.v4(),
-                      title: title.text,
-                      date: pickedDate.toString(),
-                    ));
+                    print(widget.log);
+                    if (widget.log.id.isNotEmpty) {
+                      await CreateDatabase.instance.update(Log(
+                          id: widget.log.id,
+                          title: title.text,
+                          date: pickedDate.toString()));
+                    } else {
+                      await CreateDatabase.instance.add(Log(
+                        id: uuid.v4(),
+                        title: title.text,
+                        date: pickedDate.toString(),
+                      ));
+                    }
                     Navigator.pop(context);
                   } else {
                     setState(() {
