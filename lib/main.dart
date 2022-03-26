@@ -10,9 +10,18 @@ import 'package:uuid/uuid.dart';
 import 'models/log.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-  runApp(const MaterialApp(home: App()));
+  runApp(const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [Locale('nl', '')],
+      home: App()));
   WidgetsFlutterBinding.ensureInitialized();
 }
 
@@ -338,6 +347,7 @@ class AddLog extends State<AddLogWidget> {
                         context: context,
                         initialTime: initialTime,
                       ).then((time) {
+                        print(time);
                         setState(() {
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (time == null) {
