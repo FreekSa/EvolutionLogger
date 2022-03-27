@@ -309,13 +309,11 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
       TimeOfDay(hour: DateTime.now().hour, minute: DateTime.now().minute);
 
   AddOrEditLog(Log log) {
-    print(log);
     if (log.id.isNotEmpty) {
       pickedDate = DateTime.parse(log.date);
       pickedTime = TimeOfDay(hour: pickedDate.hour, minute: pickedDate.minute);
       title.text = log.title;
     } else {
-      print("hier");
       title.text = "";
     }
   }
@@ -362,8 +360,13 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                             return;
                           } else {
                             pickedDate = date;
+                            pickedDate = DateTime(
+                                pickedDate.year,
+                                pickedDate.month,
+                                pickedDate.day,
+                                pickedTime.hour,
+                                pickedTime.minute);
                           }
-                          ;
                         });
                       });
                     }),
@@ -391,8 +394,8 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                                 pickedDate.year,
                                 pickedDate.month,
                                 pickedDate.day,
-                                time.hour,
-                                time.minute);
+                                pickedTime.hour,
+                                pickedTime.minute);
                           }
                           ;
                           print(time);
@@ -411,7 +414,6 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                 onPressed: () async {
                   var uuid = Uuid();
                   if (title.text.isNotEmpty) {
-                    print(widget.log);
                     if (widget.log.id.isNotEmpty) {
                       await CreateDatabase.instance.update(Log(
                           id: widget.log.id,
