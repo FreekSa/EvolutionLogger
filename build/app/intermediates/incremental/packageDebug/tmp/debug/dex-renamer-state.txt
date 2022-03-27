@@ -1,4 +1,4 @@
-#Sat Mar 26 14:08:07 CET 2022
+#Sun Mar 27 12:40:29 CEST 2022
 base.0=/home/freeksa/Documenten/EvolutionLogger/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex

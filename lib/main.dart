@@ -106,9 +106,9 @@ class ListOfLogs extends State<App> {
                         MaterialPageRoute(
                             builder: (context) => AddOrEditLogWidget(
                                   log: Log(
-                                      id: null.toString(),
-                                      date: null.toString(),
-                                      title: null.toString()),
+                                      id: "",
+                                      date: DateTime.now().toString(),
+                                      title: ""),
                                 )),
                       ).then(onGoBack);
                     },
@@ -153,7 +153,7 @@ class ListOfLogs extends State<App> {
                                             const Color(0xFFFF7435),
                                         foregroundColor: Colors.white,
                                         icon: Icons.edit,
-                                        label: 'Edit',
+                                        label: 'Wijzig',
                                       ),
                                       SlidableAction(
                                         onPressed: ((context) => {
@@ -201,7 +201,7 @@ class ListOfLogs extends State<App> {
                                             const Color(0xFFFE4A49),
                                         foregroundColor: Colors.white,
                                         icon: Icons.delete,
-                                        label: 'Delete',
+                                        label: 'Verwijder',
                                       ),
                                     ],
                                   ),
@@ -314,6 +314,9 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
       pickedDate = DateTime.parse(log.date);
       pickedTime = TimeOfDay(hour: pickedDate.hour, minute: pickedDate.minute);
       title.text = log.title;
+    } else {
+      print("hier");
+      title.text = "";
     }
   }
   @override
@@ -321,7 +324,7 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(
-            title: log == null
+            title: widget.log.id.isEmpty
                 ? const Text('Voeg klacht toe')
                 : const Text('Wijzig klacht'),
             leading: IconButton(
@@ -356,7 +359,7 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                         setState(() {
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (date == null) {
-                            pickedDate = DateTime.now();
+                            return;
                           } else {
                             pickedDate = date;
                           }
@@ -381,19 +384,18 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                         setState(() {
                           FocusManager.instance.primaryFocus?.unfocus();
                           if (time == null) {
-                            pickedTime = TimeOfDay(
-                                hour: DateTime.now().hour,
-                                minute: DateTime.now().minute);
+                            return;
                           } else {
                             pickedTime = time;
                             pickedDate = DateTime(
                                 pickedDate.year,
                                 pickedDate.month,
                                 pickedDate.day,
-                                pickedTime.hour,
-                                pickedTime.minute);
+                                time.hour,
+                                time.minute);
                           }
                           ;
+                          print(time);
                         });
                       });
                     }),
@@ -429,7 +431,9 @@ class AddOrEditLog extends State<AddOrEditLogWidget> {
                     });
                   }
                 },
-                child: const Text('Voeg toe'),
+                child: widget.log.id.isEmpty
+                    ? const Text('Voeg toe')
+                    : const Text('Wijzig'),
               ),
             ],
           )),
