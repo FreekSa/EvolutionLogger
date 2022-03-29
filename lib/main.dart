@@ -13,8 +13,26 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        listTileTheme: ListTileThemeData(tileColor: Colors.orange[100]),
+        // Define the default brightness and colors.
+        brightness: Brightness.dark,
+        primaryColor: Colors.orange[800],
+
+        // Define the default font family.
+        fontFamily: 'Georgia',
+        backgroundColor: Colors.orange,
+        primaryColorLight: Colors.yellow,
+        // Define the default `TextTheme`. Use this to specify the default
+        // text styling for headlines, titles, bodies of text, and more.
+        textTheme: const TextTheme(
+          headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
+          headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
+          bodyText2: TextStyle(fontSize: 14.0, fontFamily: 'Hind'),
+        ),
+      ),
       localizationsDelegates: [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -93,7 +111,9 @@ class ListOfLogs extends State<App> {
   Widget build(BuildContext context) {
     return MaterialApp(
         home: Scaffold(
+            backgroundColor: Theme.of(context).backgroundColor,
             appBar: AppBar(
+              backgroundColor: Theme.of(context).backgroundColor,
               title: Text("Logs"),
               actions: <Widget>[
                 Padding(
@@ -125,100 +145,105 @@ class ListOfLogs extends State<App> {
                       return Center(child: Text('No logs in List.'));
                     } else {
                       List<Log> logs = snapshot.data!.toList();
-                      return ListView(
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        children: snapshot.data!.map((log) {
-                          return Center(
-                              child: Card(
-                                  child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Slidable(
-                                  key: const ValueKey(0),
-                                  endActionPane: ActionPane(
-                                    motion: const ScrollMotion(),
-                                    children: [
-                                      SlidableAction(
-                                        onPressed: ((context) => {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        AddOrEditLogWidget(
-                                                            log: log)),
-                                              ).then(onGoBack)
-                                            }),
-                                        backgroundColor:
-                                            const Color(0xFFFF7435),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.edit,
-                                        label: 'Wijzig',
+                      return ListTileTheme(
+                          tileColor: Colors.yellow,
+                          child: ListView(
+                            keyboardDismissBehavior:
+                                ScrollViewKeyboardDismissBehavior.onDrag,
+                            children: snapshot.data!.map((log) {
+                              return Center(
+                                  child: Card(
+                                      child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Slidable(
+                                      key: const ValueKey(0),
+                                      endActionPane: ActionPane(
+                                        motion: const ScrollMotion(),
+                                        children: [
+                                          SlidableAction(
+                                            onPressed: ((context) => {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            AddOrEditLogWidget(
+                                                                log: log)),
+                                                  ).then(onGoBack)
+                                                }),
+                                            backgroundColor:
+                                                const Color(0xFFFF7435),
+                                            foregroundColor: Colors.white,
+                                            icon: Icons.edit,
+                                            label: 'Wijzig',
+                                          ),
+                                          SlidableAction(
+                                            onPressed: ((context) => {
+                                                  showDialog<String>(
+                                                      context: context,
+                                                      builder:
+                                                          (BuildContext
+                                                                  context) =>
+                                                              AlertDialog(
+                                                                  title: Text(
+                                                                      "Zeker dat je ${log.title} wil verwijderen?"),
+                                                                  actions: <
+                                                                      Widget>[
+                                                                    TextButton(
+                                                                        onPressed: () => Navigator.pop(
+                                                                            context,
+                                                                            "Nee"),
+                                                                        child: const Text(
+                                                                            "Nee",
+                                                                            style:
+                                                                                TextStyle(fontSize: 16.0))),
+                                                                    TextButton(
+                                                                        child: const Text(
+                                                                            "Ja",
+                                                                            style: TextStyle(
+                                                                                fontSize:
+                                                                                    16.0)),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            Future<int>
+                                                                                removed =
+                                                                                CreateDatabase.instance.remove(log.id);
+                                                                            if (removed !=
+                                                                                null) {
+                                                                              Navigator.pop(context);
+                                                                            }
+                                                                          });
+                                                                        })
+                                                                  ]))
+                                                }),
+                                            backgroundColor:
+                                                const Color(0xFFFE4A49),
+                                            foregroundColor: Colors.white,
+                                            icon: Icons.delete,
+                                            label: 'Verwijder',
+                                          ),
+                                        ],
                                       ),
-                                      SlidableAction(
-                                        onPressed: ((context) => {
-                                              showDialog<String>(
-                                                  context: context,
-                                                  builder: (BuildContext
-                                                          context) =>
-                                                      AlertDialog(
-                                                          title: Text(
-                                                              "Zeker dat je ${log.title} wil verwijderen?"),
-                                                          actions: <Widget>[
-                                                            TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        context,
-                                                                        "Nee"),
-                                                                child: const Text(
-                                                                    "Nee",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16.0))),
-                                                            TextButton(
-                                                                child: const Text(
-                                                                    "Ja",
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16.0)),
-                                                                onPressed: () {
-                                                                  setState(() {
-                                                                    Future<int>
-                                                                        removed =
-                                                                        CreateDatabase
-                                                                            .instance
-                                                                            .remove(log.id);
-                                                                    if (removed !=
-                                                                        null) {
-                                                                      Navigator.pop(
-                                                                          context);
-                                                                    }
-                                                                  });
-                                                                })
-                                                          ]))
-                                            }),
-                                        backgroundColor:
-                                            const Color(0xFFFE4A49),
-                                        foregroundColor: Colors.white,
-                                        icon: Icons.delete,
-                                        label: 'Verwijder',
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListTile(
-                                    leading: Icon(Icons.medication),
-                                    title: Text(log.title),
-                                    subtitle: Text(
-                                        "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
-                                  ))
-                            ],
-                          )));
-                        }).toList(),
-                      );
+                                      child: ListTile(
+                                        style: Theme.of(context)
+                                            .listTileTheme
+                                            .style,
+                                        leading: Icon(Icons.medication),
+                                        title: Text(log.title),
+                                        subtitle: Text(
+                                            "${DateTime.parse(log.date).hour}:${DateTime.parse(log.date).minute < 10 ? "0${DateTime.parse(log.date).minute}" : "${DateTime.parse(log.date).minute}"} \t ${DateTime.parse(log.date).day}/${DateTime.parse(log.date).month}/${DateTime.parse(log.date).year}"),
+                                      ))
+                                ],
+                              )));
+                            }).toList(),
+                          ));
                     }
                   }),
             ),
             floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.deepOrange,
               child: Icon(Icons.circle),
               onPressed: () => {
                 setState(() => {ListOfLogs()})
